@@ -1,0 +1,7 @@
+.DS_STORE
+
+Files/*
+!Files/README.md
+
+Parts/*
+!Parts/README.md
