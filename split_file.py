@@ -1,6 +1,9 @@
 import os
 import datetime
 import sys
+import time
+
+global start
 
 
 def filename_has_extension(fileName):
@@ -80,31 +83,48 @@ def split_file(filename, part_prefix, file_total_duration, start_number=1, durat
     draw_progress_bar(file_total_duration, file_total_duration)
 
 
-def draw_progress_bar(count, total, status=''):
+def remains(done, total):
+    if(done <= 0):
+        done = 0.1
+
+    now  = datetime.datetime.now()
+    left = (total - done) * (now - start) / done
+    sec = int(left.total_seconds())
+
+    if sec < 60:
+        return "{} seconds".format(sec)
+    else:
+        return "{} minutes".format(int(sec / 60))
+
+
+def draw_progress_bar(count, total):
     bar_len = 60
     filled_len = int(round(bar_len * count / float(total)))
 
     percents = round(100.0 * count / float(total), 1)
     bar = '█' * filled_len + '-' * (bar_len - filled_len)
 
-    sys.stdout.write('Generating files: [%s] %s%s ...%s\r' % (bar, percents, '%', status))
+    sys.stdout.write('Generating files: [%s] %s%s ... Remaining time: %s\r' % (bar, percents, '%', remains(count, total)))
 
     sys.stdout.flush()
 
 
 def main():
+    global start
+
+
     print('---- File splitter ----\n')
     print('Please add your file into Files folder. The clipped files will be stored into Parts folder.\n')
 
     filename = read_file_name('Enter the file name: ')
-    
+
     start_part_number = read_input('Enter the start part number (default 1): ', 1)
 
     part_prefix = read_input('Enter a part prefix value: ')
     part_prefix = part_prefix.replace(' ', '\\ ')
 
     part_duration_seconds = read_time_in_seconds('Enter the duration of the parts (default 05:00): ', '05:00')
-    
+
     file_total_duration_seconds = read_time_in_seconds('Enter file total duration (e.g. 10:05:20): ')
 
     confirm_text = f"""\nFile name: {filename}
@@ -121,7 +141,9 @@ Are those values correct? (Y/n): """
         exit()
 
     print('')
+    start = datetime.datetime.now()
     split_file(filename, part_prefix, file_total_duration_seconds)
+    print('')
 
 
 if __name__ == "__main__":
