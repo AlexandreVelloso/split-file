@@ -5,3 +5,5 @@ Files/*
 
 Parts/*
 !Parts/README.md
+
+*.pyc
