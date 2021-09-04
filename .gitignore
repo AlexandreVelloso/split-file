@@ -6,4 +6,4 @@ Files/*
 Parts/*
 !Parts/README.md
 
-*.pyc
+__pycache__/*
