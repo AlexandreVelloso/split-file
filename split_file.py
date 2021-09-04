@@ -12,7 +12,7 @@ def get_file_extension(fileName):
     return fileName[dot_position+1:]
 
 
-def read_input(message, default):
+def read_input(message, default=''):
     value = input(message)
 
     if (value == ''):
@@ -56,7 +56,7 @@ def cut_file(filename, output_name, start, end, file_extension="mp3"):
     os.system(command)
 
 
-def split_file(filename, file_total_duration, start_number=1, duration=300, extension="mp3"):
+def split_file(filename, part_prefix, file_total_duration, start_number=1, duration=300, extension="mp3"):
     input_path = os.path.abspath(filename)
     
     part_number = start_number
@@ -66,7 +66,7 @@ def split_file(filename, file_total_duration, start_number=1, duration=300, exte
     draw_progress_bar(start, file_total_duration)
 
     while(end <= file_total_duration):
-        cut_file(filename, str(part_number), start, end)
+        cut_file(filename, part_prefix + str(part_number), start, end)
 
         start = end
         end += duration
@@ -75,7 +75,7 @@ def split_file(filename, file_total_duration, start_number=1, duration=300, exte
         draw_progress_bar(start, file_total_duration)
 
     if (start < file_total_duration):
-        cut_file(filename, str(part_number), start, end)
+        cut_file(filename, part_prefix + str(part_number), start, end)
 
     draw_progress_bar(file_total_duration, file_total_duration)
 
@@ -97,12 +97,19 @@ def main():
     print('Please add your file into Files folder. The clipped files will be stored into Parts folder.\n')
 
     filename = read_file_name('Enter the file name: ')
+    
     start_part_number = read_input('Enter the start part number (default 1): ', 1)
+
+    part_prefix = read_input('Enter a part prefix value: ')
+    part_prefix = part_prefix.replace(' ', '\\ ')
+
     part_duration_seconds = read_time_in_seconds('Enter the duration of the parts (default 05:00): ', '05:00')
+    
     file_total_duration_seconds = read_time_in_seconds('Enter file total duration (e.g. 10:05:20): ')
 
     confirm_text = f"""\nFile name: {filename}
 Start part number: {start_part_number}
+Part prefix value: {part_prefix}
 Part duration in seconds: {part_duration_seconds}
 File total duration in seconds: {file_total_duration_seconds}
 
@@ -114,7 +121,7 @@ Are those values correct? (Y/n): """
         exit()
 
     print('')
-    split_file(filename, file_total_duration_seconds)
+    split_file(filename, part_prefix, file_total_duration_seconds)
 
 
 if __name__ == "__main__":
