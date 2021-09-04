@@ -1,6 +1,5 @@
 import os
 import datetime
-import time
 from inputs import *
 from progress_bar import *
 
