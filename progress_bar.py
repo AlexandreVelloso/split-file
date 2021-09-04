@@ -1,7 +1,6 @@
 import sys
 from datetime import datetime
 import threading
-
 import time
 
 class ProgressBar:
