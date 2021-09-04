@@ -1,10 +1,16 @@
 import sys
 from datetime import datetime
+import threading
+
+import time
 
 class ProgressBar:
 
     def __init__(self):
         self.start = datetime.now()
+
+    def run(self):
+
 
     def remains(self, done, total):
         if(done <= 0):
