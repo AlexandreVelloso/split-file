@@ -20,9 +20,8 @@ def split_file(filename, part_prefix, file_total_duration, start_number=1, durat
     start = 0
     end = duration
 
-    progress_bar = ProgressBar()
-
-    progress_bar.draw_progress_bar(start, file_total_duration)
+    progress = ProgressBar(file_total_duration)
+    progress.run()
 
     while(end <= file_total_duration):
         cut_file(filename, part_prefix + str(part_number), start, end)
@@ -31,12 +30,10 @@ def split_file(filename, part_prefix, file_total_duration, start_number=1, durat
         end += duration
         part_number += 1
 
-        progress_bar.draw_progress_bar(start, file_total_duration)
+        progress.count = start
 
     if (start < file_total_duration):
         cut_file(filename, part_prefix + str(part_number), start, end)
-
-    progress_bar.draw_progress_bar(file_total_duration, file_total_duration)
 
 
 def main():
@@ -69,7 +66,6 @@ Are those values correct? (Y/n): """
 
     print('')
     split_file(filename, part_prefix, file_total_duration_seconds)
-    print('')
 
 
 if __name__ == "__main__":
