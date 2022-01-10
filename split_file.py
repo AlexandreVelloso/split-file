@@ -1,5 +1,4 @@
 import os
-import datetime
 from inputs import *
 from progress_bar import *
 
@@ -13,9 +12,7 @@ def cut_file(filename, output_name, start, end, file_extension="mp3"):
     os.system(command)
 
 
-def split_file(filename, part_prefix, file_total_duration, start_number=1, duration=300, extension="mp3"):
-    input_path = os.path.abspath(filename)
-    
+def split_file(filename, part_prefix, file_total_duration, start_number=1, duration=300): 
     part_number = start_number
     start = 0
     end = duration
