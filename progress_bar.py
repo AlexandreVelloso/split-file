@@ -9,15 +9,20 @@ class ProgressBar:
         self.start = datetime.now()
         self.count = 0
         self.total = total
+        self.thread = threading.Thread(target=self.update_progress_bar)
+        self.doRun = False
 
     def run(self):
         self.start = datetime.now()
 
-        t = threading.Thread(target=self.update_progress_bar)
-        t.start()
+        self.thread.start()
+
+    def stop(self):
+        self.doRun = True
+        self.thread.join()
 
     def update_progress_bar(self):
-        while(self.count < self.total):
+        while(self.count < self.total and self.doRun == False):
             self.draw_progress_bar(self.count, self.total)
             time.sleep(0.5)
 
