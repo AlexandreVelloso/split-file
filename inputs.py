@@ -33,8 +33,15 @@ def read_file_name(message):
 def read_time_in_seconds(message, default=''):
     time = read_input(message, default)
 
+    return get_time_in_seconds(time)
+
+
+def get_time_in_seconds(time):
     date_time = None
-    
+
+    if(len(time) == 4):
+        time = time.rjust(5, '0')
+
     if len(time) == 5:
         date_time = datetime.strptime(time, "%M:%S")
     else:
