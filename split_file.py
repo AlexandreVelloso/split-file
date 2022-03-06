@@ -92,8 +92,9 @@ def read_parameters_file():
             if not chapter:
                 break
 
-            start_time, chapter_name = chapter.split(' ')
-            chapter_name = chapter_name.replace(' ', '\\ ')
+            chapter_words = chapter.split(' ')
+            start_time = chapter_words[0]
+            chapter_name = "\\ ".join(chapter_words[1:])
 
             time_start_file = get_time_in_seconds(start_time)
 
@@ -102,8 +103,7 @@ def read_parameters_file():
             if not next_chapter:
                 time_end_file = file_total_duration_seconds
             else:
-                time_end_file, _ = next_chapter.split(' ')
-                time_end_file = get_time_in_seconds(time_end_file)
+                time_end_file = get_time_in_seconds(next_chapter.split(' ')[0])
 
             part_number = split_file(filename, part_prefix, separator, chapter_name, time_end_file, time_start_file, part_number, part_duration_seconds)
 
