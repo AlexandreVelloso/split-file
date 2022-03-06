@@ -93,10 +93,8 @@ def read_parameters_file():
                 break
 
             chapter_words = chapter.split(' ')
-            start_time = chapter_words[0]
-            chapter_name = "\\ ".join(chapter_words[1:])
-
-            time_start_file = get_time_in_seconds(start_time)
+            time_start_file = get_time_in_seconds(chapter_words[0])
+            chapter_name = '\\ '.join(chapter_words[1:])
 
             next_chapter = fp.readline().rstrip()
 
