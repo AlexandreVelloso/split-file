@@ -28,3 +28,7 @@ The rest of the file have each start of a section followed by the name of the se
 00:00 chapter1
 10:00 chapter2
 ```
+
+### Known problems
+
+You may need to install python-tk@3.9w
