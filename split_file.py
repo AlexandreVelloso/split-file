@@ -16,11 +16,13 @@ class SplitFile:
         self.start_part_number = start_part_number
         self.chapters = chapters
 
+
     def run(self):
         self.start = datetime.now()
 
         self.thread.start()
 
+    
     def stop(self):
         self.doRun = True
         self.thread.join()

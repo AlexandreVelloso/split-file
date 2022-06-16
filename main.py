@@ -44,18 +44,59 @@ split_file_button = [
     [sg.Button('Split file', key='split_file')],
 ]
 
-layout = [
+sz = (25, 0)
+col1 = [
     [
-        file_picker,
-        parameters,
+        sg.Text('Please select a file', size=sz),
+        sg.In(key='file_path', size=(20, 1), disabled=True),
+        sg.FileBrowse(initial_folder='./Files', file_types=[('Mp3 files', '*.mp3')]),
     ],
+
     [
-        sg.HorizontalSeparator(),
+        sg.Text('Enter the first part number', size=sz),
+        sg.InputText('1', key='part_number', size=(5, 1)),
     ],
+    
     [
-        split_file_button,
+        sg.Text('Enter the part prefix', size=sz),
+        sg.InputText('', key='part_prefix', size=(5, 1)),
+    ],
+
+    [
+        sg.Text('Enter the separator', size=sz),
+        sg.InputText('-', key='separator', size=(5, 1)),
+    ],
+
+    [
+        sg.Text('Enter the file duration', size=sz),
+        sg.InputText('00:00:00', key='file_duration', size=(10, 1)),
+    ],
+
+    [
+        sg.Text('Enter the part duration', size=sz),
+        sg.InputText('05:00', key='part_duration', size=(10, 1)),
+    ],
+
+    [
+        sg.Text('Enter the time of each chapter', size=sz),
+        sg.Multiline(size=(30, 10), key='chapters'),
+    ],
+
+    [
+        sg.Button('Split file', key='split_file'),
     ]
 ]
+
+col2 = [
+    []
+]
+
+layout = [[
+    sg.Column(col1, element_justification='l' ),
+    sg.VerticalSeparator(),
+    sg.Column(col2, element_justification='l'),
+]]
+
 
 window = sg.Window('Split audio file', layout)
 
