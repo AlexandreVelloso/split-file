@@ -3,32 +3,16 @@
 ## How to run the code
 This project requires ffmpeg
 
-After installing the dependencies you can run the script
+### Activate the virtual env
 ```
-python3 split_file.py
-```
-
-## parameters.txt file structure
-
-The parameters file structure is very simple <br>
-The header of the file has the following fields
-
-```
-file name
-first part number
-part prefix
-separator
-file total time
-part duration
+$ source bin/activate
 ```
 
-The rest of the file have each start of a section followed by the name of the section
-
+### Run the code
 ```
-00:00 chapter1
-10:00 chapter2
+python3 main.py
 ```
 
 ### Known problems
 
-You may need to install python-tk@3.9w
+You may need to install <b>python-tk@3.9w</b> in your OS
