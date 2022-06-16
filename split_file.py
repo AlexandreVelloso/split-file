@@ -43,7 +43,7 @@ class SplitFile:
         start = time_start_file
         end = time_start_file + duration
 
-        progress = ProgressBar(file_total_duration)
+        progress = ProgressBar(file_total_duration, self.window)
         progress.run()
 
         while(end <= file_total_duration):

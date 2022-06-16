@@ -49,7 +49,7 @@ col1 = [
     ]
 ]
 
-size_col2 = (8,0)
+size_col2 = (15,0)
 col2 = [
     [
         sg.Text('Filename', size=size_col2),
@@ -57,8 +57,12 @@ col2 = [
     ],
     [
         sg.Text('Status', size=size_col2),
-        sg.Multiline(key='status', size=(40, 25)),
+        sg.Multiline(key='status', size=(40, 20)),
     ],
+    [
+        sg.Text('Progress', size=size_col2),
+        sg.ProgressBar(100, orientation='h', size=(29, 20), border_width=1, key='progress_bar', bar_color=['White','Black']),
+    ]
 ]
 
 layout = [[
