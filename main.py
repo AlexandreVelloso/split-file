@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 import os.path
 
 from inputs import get_time_in_seconds
-from split_file import split_file
+from split_file import *
 
 file_picker = [
     [
@@ -75,7 +75,8 @@ def split():
 
     part_number = int(start_part_number)
 
-    split_file(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, part_number, chapters)
+    split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, part_number, chapters)
+    split_file.run()
 
 
 # event loop
