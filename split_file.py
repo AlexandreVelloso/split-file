@@ -88,3 +88,6 @@ class SplitFile:
             self.window['status'].update('\n'.join(status))
 
             part_number = self.split_chapter(self.filename, self.part_prefix, self.separator, chapter_name, time_end_file, time_start_file, part_number, self.part_duration_seconds)
+
+            status.append('Done')
+            self.window['status'].update('\n'.join(status))
