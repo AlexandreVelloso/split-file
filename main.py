@@ -57,7 +57,7 @@ col2 = [
     ],
     [
         sg.Text('Status', size=size_col2),
-        sg.Multiline(key='chapters', size=(40, 25)),
+        sg.Multiline(key='status', size=(40, 25)),
     ],
 ]
 
@@ -71,7 +71,7 @@ layout = [[
 window = sg.Window('Split audio file', layout)
 
 
-def split():
+def split(window):
     filename = values['file_path'].rstrip().replace(' ', '\\ ')
     filename = os.path.basename(filename)
 
@@ -86,7 +86,7 @@ def split():
 
     part_number = int(start_part_number)
 
-    split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, part_number, chapters)
+    split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, part_number, chapters, window)
     split_file.run()
 
 
@@ -98,7 +98,6 @@ while True:
 
     if event == "file_path":
         filename = values['file_path']
-        print(filename)
         filename = os.path.basename(filename)
 
         window['show_filename'].update(filename)
@@ -114,6 +113,6 @@ while True:
             sg.popup('Please select a valid file')
             continue
 
-        split()
+        split(window)
 
 window.close()

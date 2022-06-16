@@ -5,7 +5,7 @@ from inputs import get_time_in_seconds
 
 class SplitFile:
 
-    def __init__(self, filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters):
+    def __init__(self, filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, window):
         self.thread = threading.Thread(target=self.split_file)
         self.doRun = False
         self.filename = filename
@@ -15,6 +15,7 @@ class SplitFile:
         self.part_duration_seconds = part_duration_seconds
         self.start_part_number = start_part_number
         self.chapters = chapters
+        self.window = window
 
 
     def run(self):
@@ -68,6 +69,8 @@ class SplitFile:
     def split_file(self):
         part_number = int(self.start_part_number)
 
+        status = []
+
         for i in range(0, len(self.chapters)):
             chapter = self.chapters[i]
 
@@ -80,5 +83,8 @@ class SplitFile:
             else:
                 next_chapter = self.chapters[i + 1]
                 time_end_file = get_time_in_seconds(next_chapter.split(' ')[0])
+
+            status.append('Splitting chapter ' + chapter_name.replace('\\', ' '))
+            self.window['status'].update('\n'.join(status))
 
             part_number = self.split_chapter(self.filename, self.part_prefix, self.separator, chapter_name, time_end_file, time_start_file, part_number, self.part_duration_seconds)
