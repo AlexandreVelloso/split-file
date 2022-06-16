@@ -5,80 +5,42 @@ import os.path
 from inputs import get_time_in_seconds
 from split_file import *
 
-file_picker = [
-    [
-        sg.Text('Please select a file'),
-        sg.In(key='file_path', size=(100, 1), disabled=True),
-        sg.FileBrowse(initial_folder='./Files', file_types=[('Mp3 files', '*.mp3')]),
-    ]
-]
 
-parameters = [
-    [
-        sg.Text('Enter the first part number'),
-        sg.InputText('1', key='part_number', size=(3, 1)),
-    ],
-    [
-        sg.Text('Enter the part prefix'),
-        sg.InputText('', key='part_prefix', size=(30, 1)),
-    ],
-    [
-        sg.Text('Enter the separator'),
-        sg.InputText('-', key='separator', size=(5, 1)),
-    ],
-    [
-        sg.Text('Enter the file duration'),
-        sg.InputText('00:00:00', key='file_duration', size=(10, 1)),
-    ],
-    [
-        sg.Text('Enter the part duration'),
-        sg.InputText('05:00', key='part_duration', size=(10, 1)),
-    ],
-    [
-        sg.Text('Enter the time of each chapter'),
-        sg.Multiline(size=(30, 10), key='chapters'),
-    ]
-]
-
-split_file_button = [
-    [sg.Button('Split file', key='split_file')],
-]
-
-sz = (25, 0)
+size_col1 = (25, 0)
 col1 = [
     [
-        sg.Text('Please select a file', size=sz),
-        sg.In(key='file_path', size=(20, 1), disabled=True),
+        sg.Text('Please select a file', size=size_col1),
+        sg.In(key='file_path', size=(20, 1), disabled=True, enable_events=True),
         sg.FileBrowse(initial_folder='./Files', file_types=[('Mp3 files', '*.mp3')]),
     ],
 
     [
-        sg.Text('Enter the first part number', size=sz),
+        sg.Text('Enter the first part number', size=size_col1),
         sg.InputText('1', key='part_number', size=(5, 1)),
     ],
     
     [
-        sg.Text('Enter the part prefix', size=sz),
+        sg.Text('Enter the part prefix', size=size_col1),
         sg.InputText('', key='part_prefix', size=(5, 1)),
     ],
 
     [
-        sg.Text('Enter the separator', size=sz),
+        sg.Text('Enter the separator', size=size_col1),
         sg.InputText('-', key='separator', size=(5, 1)),
     ],
 
     [
-        sg.Text('Enter the file duration', size=sz),
+        sg.Text('Enter the file duration', size=size_col1),
         sg.InputText('00:00:00', key='file_duration', size=(10, 1)),
     ],
 
     [
-        sg.Text('Enter the part duration', size=sz),
+        sg.Text('Enter the part duration', size=size_col1),
         sg.InputText('05:00', key='part_duration', size=(10, 1)),
     ],
 
     [
-        sg.Text('Enter the time of each chapter', size=sz),
+        sg.Text('Enter the time of each chapter', size=size_col1),
         sg.Multiline(size=(30, 10), key='chapters'),
     ],
 
@@ -87,8 +49,16 @@ col1 = [
     ]
 ]
 
+size_col2 = (8,0)
 col2 = [
-    []
+    [
+        sg.Text('Filename', size=size_col2),
+        sg.Text(key="show_filename", size=(40,0)),
+    ],
+    [
+        sg.Text('Status', size=size_col2),
+        sg.Multiline(key='chapters', size=(40, 25)),
+    ],
 ]
 
 layout = [[
@@ -125,6 +95,13 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
+
+    if event == "file_path":
+        filename = values['file_path']
+        print(filename)
+        filename = os.path.basename(filename)
+
+        window['show_filename'].update(filename)
 
     if event == 'split_file':
         filename = values['file_path']
