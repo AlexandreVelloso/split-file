@@ -168,3 +168,5 @@ Files/*
 
 Parts/*
 !Parts/README.md
+
+.vscode/*
