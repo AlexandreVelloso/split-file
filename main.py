@@ -101,13 +101,13 @@ class MainMenu:
 
         # Status row
         self.lb_status = Label(self.root, text="Status", width=10)
-        self.txt_status = Text(self.root, width=50, height=10, state='disabled')
+        self.txt_status = Text(self.root, width=50, height=20, state='disabled')
 
         self.scroll_status = Scrollbar(self.root, orient=VERTICAL, command=self.txt_status.yview)
 
         self.lb_status.grid(row=0, column=5, sticky=W)
-        self.txt_status.grid(row=0, column=6, sticky=EW, rowspan=4)
-        self.scroll_status.grid(row=0, column=7, sticky='NSW', rowspan=4)
+        self.txt_status.grid(row=0, column=6, sticky=EW, rowspan=6)
+        self.scroll_status.grid(row=0, column=7, sticky='NSW', rowspan=6)
 
         self.txt_status['yscrollcommand'] = self.scroll_status.set
 
@@ -119,8 +119,8 @@ class MainMenu:
         self.lb_progress_bar = Label(self.root, text="Progress", width=10)
         self.progress_bar = Progressbar(self.root, orient=HORIZONTAL, length=100, style="TProgressbar")
 
-        self.lb_progress_bar.grid(row=4, column=5, sticky=W)
-        self.progress_bar.grid(row=4, column=6, sticky=EW)
+        self.lb_progress_bar.grid(row=6, column=5, sticky=W)
+        self.progress_bar.grid(row=6, column=6, sticky=EW)
 
     
     def open_file(self, txt_file_name):
@@ -142,6 +142,8 @@ class MainMenu:
 
     def split(self):
         filename = self.txt_file_name.get()
+        part_prefix = self.txt_part_prefix.get()
+        chapters = self.txt_chapters.get('1.0', END).split('\n')
 
         if filename == '':
             showerror("Error", "Please select a file")
@@ -151,17 +153,20 @@ class MainMenu:
             showerror("Error", "File does not exist")
             return
 
+        if part_prefix == '':
+            self.ent_part_prefix.focus_set()
+            showerror("Error", "Please enter a part prefix")
+            return
+
+
         filename = filename.rstrip().replace(' ', '\\ ')
         filename = os.path.basename(filename)
 
-        part_prefix = self.txt_part_prefix.get()
         separator = self.txt_separator.get()
 
         file_total_duration_seconds = self.get_total_file_duration(self.txt_file_name.get())
         part_duration_seconds = get_time_in_seconds(self.txt_part_duration.get())
-        start_part_number = int(self.txt_part_number.get())
-
-        chapters = self.txt_chapters.get('1.0', END).split('\n')
+        start_part_number = int(self.txt_part_number.get())        
 
         split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, self.progress_bar, self.txt_status)
         split_file.run()

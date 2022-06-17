@@ -17,6 +17,7 @@ class SplitFile:
         self.chapters = chapters
         self.progress_bar = progress_bar
         self.txt_status = txt_status
+        self.status = []
 
 
     def run(self):
@@ -37,6 +38,8 @@ class SplitFile:
         command = f'ffmpeg -y -i {input_path} -ss {start} -t {end - start} -acodec copy {output_path} > /dev/null 2>&1'
 
         os.system(command)
+
+        self.set_status_text((output_name + "." + file_extension).replace('\\ ', ' '))
 
 
     def split_chapter(self, filename, part_prefix, separator, part_suffix, file_total_duration, time_start_file = 0, start_number=1, duration=300): 
@@ -70,8 +73,6 @@ class SplitFile:
     def split_file(self):
         part_number = int(self.start_part_number)
 
-        status = []
-
         for i in range(0, len(self.chapters)):
             chapter = self.chapters[i]
 
@@ -85,16 +86,17 @@ class SplitFile:
                 next_chapter = self.chapters[i + 1]
                 time_end_file = get_time_in_seconds(next_chapter.split(' ')[0])
 
-            status.append('Splitting chapter ' + chapter_name.replace('\\ ', ' '))
-            self.set_status_text('\n'.join(status))
+            self.set_status_text('Splitting chapter ' + chapter_name.replace('\\ ', ' '))
 
             part_number = self.split_chapter(self.filename, self.part_prefix, self.separator, chapter_name, time_end_file, time_start_file, part_number, self.part_duration_seconds)
 
-            status.append('Done')
-            self.set_status_text('\n'.join(status))
+            self.set_status_text('Done')
     
 
     def set_status_text(self, text):
+        self.status.append(text)
+        text = '\n'.join(self.status)
+
         self.txt_status.configure(state='normal')
         self.txt_status.delete(1.0, "end")
         self.txt_status.insert(1.0, text)
