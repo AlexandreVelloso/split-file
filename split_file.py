@@ -18,6 +18,7 @@ class SplitFile:
         self.progress_bar = progress_bar
         self.txt_status = txt_status
         self.status = []
+        self.progress = ProgressBar(file_total_duration_seconds, progress_bar)
 
 
     def run(self):
@@ -47,9 +48,6 @@ class SplitFile:
         start = time_start_file
         end = time_start_file + duration
 
-        progress = ProgressBar(file_total_duration, self.progress_bar)
-        progress.run()
-
         while(end <= file_total_duration):
             output_name = ''.join([part_prefix, '\\ ', separator, '\\ ', str(part_number), '\\ ', separator, '\\ ', part_suffix])
             self.cut_file(filename, output_name, start, end)
@@ -58,14 +56,12 @@ class SplitFile:
             end += duration
             part_number += 1
 
-            progress.count = start
+            self.progress.count = start
 
         if (start < file_total_duration):
             output_name = ''.join([part_prefix, '\\ ', separator, '\\ ', str(part_number), '\\ ', separator, '\\ ', part_suffix])
             self.cut_file(filename, output_name, start, file_total_duration)
             part_number += 1
-
-        progress.stop()
 
         return part_number
 
@@ -73,14 +69,16 @@ class SplitFile:
     def split_file(self):
         part_number = int(self.start_part_number)
 
-        for i in range(0, len(self.chapters)):
+        self.progress.run()
+
+        for i in range(0, len(self.chapters) - 1):
             chapter = self.chapters[i]
 
             chapter_words = chapter.split(' ')
             time_start_file = get_time_in_seconds(chapter_words[0])
             chapter_name = '\\ '.join(chapter_words[1:])
 
-            if i == len(self.chapters) - 1:
+            if i == len(self.chapters) - 2:
                 time_end_file = self.file_total_duration_seconds
             else:
                 next_chapter = self.chapters[i + 1]
@@ -90,7 +88,9 @@ class SplitFile:
 
             part_number = self.split_chapter(self.filename, self.part_prefix, self.separator, chapter_name, time_end_file, time_start_file, part_number, self.part_duration_seconds)
 
-            self.set_status_text('Done')
+        
+        self.set_status_text('Done')
+        self.progress.stop()
     
 
     def set_status_text(self, text):
