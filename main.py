@@ -1,4 +1,6 @@
+import math
 import os
+import subprocess
 from tkinter import *
 from tkinter import filedialog
 from tkinter.messagebox import showerror
@@ -12,7 +14,7 @@ class MainMenu:
     
     def __init__(self, root):
         self.form_width = 1100
-        self.form_height = 400
+        self.form_height = 350
 
         self.root = root
         self.root.title('Split audio file')
@@ -66,23 +68,14 @@ class MainMenu:
         self.lb_separator.grid(row=3, column=0, sticky=E)
         self.ent_separator.grid(row=3, column=1, sticky=W)
 
-        # File duration row
-        self.txt_file_duration = StringVar(value='00:00:00')
-
-        self.lb_file_duration = Label(self.root, text="File duration", width=10)
-        self.ent_file_duration = Entry(self.root, textvariable=self.txt_file_duration, width=10)
-
-        self.lb_file_duration.grid(row=4, column=0, sticky=E)
-        self.ent_file_duration.grid(row=4, column=1, sticky=W)
-
         # Part duration row
         self.txt_part_duration = StringVar(value='05:00')
 
         self.lb_part_duration = Label(self.root, text="Part duration", width=10)
         self.ent_part_duration = Entry(self.root, textvariable=self.txt_part_duration, width=10)
 
-        self.lb_part_duration.grid(row=5, column=0, sticky=E)
-        self.ent_part_duration.grid(row=5, column=1, sticky=W)
+        self.lb_part_duration.grid(row=4, column=0, sticky=E)
+        self.ent_part_duration.grid(row=4, column=1, sticky=W)
 
         # Chapters row
         self.lb_chapters = Label(self.root, text="Chapters", width=10)
@@ -90,21 +83,21 @@ class MainMenu:
 
         self.scroll_chapters = Scrollbar(self.root, orient=VERTICAL, command=self.txt_chapters.yview)
 
-        self.lb_chapters.grid(row=6, column=0, sticky=E)
-        self.txt_chapters.grid(row=6, column=1, sticky=EW)
-        self.scroll_chapters.grid(row=6, column=2, sticky='NSW')
+        self.lb_chapters.grid(row=5, column=0, sticky=E)
+        self.txt_chapters.grid(row=5, column=1, sticky=EW)
+        self.scroll_chapters.grid(row=5, column=2, sticky='NSW')
 
         self.txt_chapters['yscrollcommand'] = self.scroll_chapters.set
 
         # Split file button
         self.btn_split_file = Button(self.root, text="Split file", command=self.split)
 
-        self.btn_split_file.grid(row=7, column=1, sticky=EW)
+        self.btn_split_file.grid(row=6, column=1, sticky=EW)
 
         # Vertical separator
         self.v_separator = Separator(self.root,orient=VERTICAL)
 
-        self.v_separator.grid(row=0, column=4, padx=10, pady=10, rowspan=8, sticky=NS)
+        self.v_separator.grid(row=0, column=4, padx=10, pady=10, rowspan=7, sticky=NS)
 
         # Status row
         self.lb_status = Label(self.root, text="Status", width=10)
@@ -139,6 +132,14 @@ class MainMenu:
         txt_file_name.set(file_path)
 
     
+    def get_total_file_duration(self, file_path):
+        try:
+            result = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            return math.trunc(float(result.stdout))
+        except:
+            return 0
+
+
     def split(self):
         filename = self.txt_file_name.get()
 
@@ -156,7 +157,7 @@ class MainMenu:
         part_prefix = self.txt_part_prefix.get()
         separator = self.txt_separator.get()
 
-        file_total_duration_seconds = get_time_in_seconds(self.txt_file_duration.get())
+        file_total_duration_seconds = self.get_total_file_duration(self.txt_file_name.get())
         part_duration_seconds = get_time_in_seconds(self.txt_part_duration.get())
         start_part_number = int(self.txt_part_number.get())
 
