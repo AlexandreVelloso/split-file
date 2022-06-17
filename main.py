@@ -1,122 +1,176 @@
-from fileinput import filename
-import PySimpleGUI as sg
-import os.path
+import os
+from tkinter import *
+from tkinter import filedialog
+from tkinter.messagebox import showerror
+from tkinter.ttk import Progressbar, Separator, Style
 
 from inputs import get_time_in_seconds
 from split_file import *
 
 
-size_col1 = (25, 0)
-col1 = [
-    [
-        sg.Text('Please select a file', size=size_col1),
-        sg.In(key='file_path', size=(20, 1), disabled=True, enable_events=True),
-        sg.FileBrowse(initial_folder='./Files', file_types=[('Mp3 files', '*.mp3')]),
-    ],
-
-    [
-        sg.Text('Enter the first part number', size=size_col1),
-        sg.InputText('1', key='part_number', size=(5, 1)),
-    ],
+class MainMenu:
     
-    [
-        sg.Text('Enter the part prefix', size=size_col1),
-        sg.InputText('', key='part_prefix', size=(5, 1)),
-    ],
+    def __init__(self, root):
+        self.form_width = 1100
+        self.form_height = 400
 
-    [
-        sg.Text('Enter the separator', size=size_col1),
-        sg.InputText('-', key='separator', size=(5, 1)),
-    ],
+        self.root = root
+        self.root.title('Split audio file')
+        self.root.geometry('500x500')
+        self.root.resizable(False, False)
 
-    [
-        sg.Text('Enter the file duration', size=size_col1),
-        sg.InputText('00:00:00', key='file_duration', size=(10, 1)),
-    ],
+        screen_width_resolution = self.root.winfo_screenwidth()
+        screen_height_resolution = self.root.winfo_screenheight()
 
-    [
-        sg.Text('Enter the part duration', size=size_col1),
-        sg.InputText('05:00', key='part_duration', size=(10, 1)),
-    ],
+        pos_x = (screen_width_resolution - self.form_width) / 2
+        pos_y = (screen_height_resolution - self.form_height) / 2
 
-    [
-        sg.Text('Enter the time of each chapter', size=size_col1),
-        sg.Multiline(size=(30, 10), key='chapters'),
-    ],
+        self.root.geometry("%dx%d+%d+%d" % (self.form_width, self.form_height, pos_x, pos_y))
+        self.root.minsize(self.form_width, self.form_height)
 
-    [
-        sg.Button('Split file', key='split_file'),
-    ]
-]
+        # Open file row
+        self.txt_file_name = StringVar()
+        
+        self.lb_open_file = Label(self.root, text="Open file", width=10)
+        self.ent_file_name = Entry(self.root, width=40, state='readonly', textvariable=self.txt_file_name)
+        self.btn_open_file = Button(self.root, text="Open File", command=lambda: self.open_file(self.txt_file_name))
+        
+        self.lb_open_file.grid(row=0, column=0, sticky=E)
+        self.ent_file_name.grid(row=0, column=1, sticky=W)
+        self.btn_open_file.grid(row=0, column=2, sticky=W)
 
-size_col2 = (15,0)
-col2 = [
-    [
-        sg.Text('Filename', size=size_col2),
-        sg.Text(key="show_filename", size=(40,0)),
-    ],
-    [
-        sg.Text('Status', size=size_col2),
-        sg.Multiline(key='status', size=(40, 20)),
-    ],
-    [
-        sg.Text('Progress', size=size_col2),
-        sg.ProgressBar(100, orientation='h', size=(29, 20), border_width=1, key='progress_bar', bar_color=['White','Black']),
-    ]
-]
+        # Part number row
+        self.txt_part_number = StringVar(value='1')
 
-layout = [[
-    sg.Column(col1, element_justification='l' ),
-    sg.VerticalSeparator(),
-    sg.Column(col2, element_justification='l'),
-]]
+        self.lb_part_number = Label(self.root, text="Part number", width=10)
+        self.ent_part_number = Entry(self.root, textvariable=self.txt_part_number, width=5)
+        
+        self.lb_part_number.grid(row=1, column=0, sticky=E)
+        self.ent_part_number.grid(row=1, column=1, sticky=W)
 
+        # Part prefix row
+        self.txt_part_prefix = StringVar(value='GOT')
 
-window = sg.Window('Split audio file', layout)
+        self.lb_part_prefix = Label(self.root, text="Part prefix", width=10)
+        self.ent_part_prefix = Entry(self.root, textvariable=self.txt_part_prefix, width=5)
 
+        self.lb_part_prefix.grid(row=2, column=0, sticky=E)
+        self.ent_part_prefix.grid(row=2, column=1, sticky=W)
 
-def split(window):
-    filename = values['file_path'].rstrip().replace(' ', '\\ ')
-    filename = os.path.basename(filename)
+        # Separator row
+        self.txt_separator = StringVar(value='-')
 
-    part_prefix = values['part_prefix']
-    separator = values['separator']
+        self.lb_separator = Label(self.root, text="Separator", width=10)
+        self.ent_separator = Entry(self.root, textvariable=self.txt_separator, width=5)
 
-    file_total_duration_seconds = get_time_in_seconds(values['file_duration'])
-    part_duration_seconds = get_time_in_seconds(values['part_duration'])
-    start_part_number = int(values['part_number'])
+        self.lb_separator.grid(row=3, column=0, sticky=E)
+        self.ent_separator.grid(row=3, column=1, sticky=W)
 
-    chapters = values['chapters'].split('\n')
+        # File duration row
+        self.txt_file_duration = StringVar(value='09:37:58')
 
-    part_number = int(start_part_number)
+        self.lb_file_duration = Label(self.root, text="File duration", width=10)
+        self.ent_file_duration = Entry(self.root, textvariable=self.txt_file_duration, width=10)
 
-    split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, part_number, chapters, window)
-    split_file.run()
+        self.lb_file_duration.grid(row=4, column=0, sticky=E)
+        self.ent_file_duration.grid(row=4, column=1, sticky=W)
 
+        # Part duration row
+        self.txt_part_duration = StringVar(value='05:00')
 
-# event loop
-while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED or event == 'Exit':
-        break
+        self.lb_part_duration = Label(self.root, text="Part duration", width=10)
+        self.ent_part_duration = Entry(self.root, textvariable=self.txt_part_duration, width=10)
 
-    if event == "file_path":
-        filename = values['file_path']
-        filename = os.path.basename(filename)
+        self.lb_part_duration.grid(row=5, column=0, sticky=E)
+        self.ent_part_duration.grid(row=5, column=1, sticky=W)
 
-        window['show_filename'].update(filename)
+        # Chapters row
+        self.lb_chapters = Label(self.root, text="Chapters", width=10)
+        self.txt_chapters = Text(self.root, width=50, height=10)
 
-    if event == 'split_file':
-        filename = values['file_path']
+        self.scroll_chapters = Scrollbar(self.root, orient=VERTICAL, command=self.txt_chapters.yview)
+
+        self.lb_chapters.grid(row=6, column=0, sticky=E)
+        self.txt_chapters.grid(row=6, column=1, sticky=EW)
+        self.scroll_chapters.grid(row=6, column=2, sticky='NSW')
+
+        self.txt_chapters['yscrollcommand'] = self.scroll_chapters.set
+
+        # Split file button
+        self.btn_split_file = Button(self.root, text="Split file", command=self.split)
+
+        self.btn_split_file.grid(row=7, column=1, sticky=EW)
+
+        # Vertical separator
+        self.v_separator = Separator(self.root,orient=VERTICAL)
+
+        self.v_separator.grid(row=0, column=4, padx=10, pady=10, rowspan=8, sticky=NS)
+
+        # Status row
+        self.lb_status = Label(self.root, text="Status", width=10)
+        self.txt_status = Text(self.root, width=50, height=10, state='disabled')
+
+        self.scroll_status = Scrollbar(self.root, orient=VERTICAL, command=self.txt_status.yview)
+
+        self.lb_status.grid(row=0, column=5, sticky=W)
+        self.txt_status.grid(row=0, column=6, sticky=EW, rowspan=4)
+        self.scroll_status.grid(row=0, column=7, sticky='NSW', rowspan=4)
+
+        self.txt_status['yscrollcommand'] = self.scroll_status.set
+
+        # Progress bar row
+        self.stl_progress_bar = Style()
+        self.stl_progress_bar.theme_use("default")
+        self.stl_progress_bar.configure("TProgressbar", thickness=10)
+
+        self.lb_progress_bar = Label(self.root, text="Progress", width=10)
+        self.progress_bar = Progressbar(self.root, orient=HORIZONTAL, length=100, style="TProgressbar")
+
+        self.lb_progress_bar.grid(row=4, column=5, sticky=W)
+        self.progress_bar.grid(row=4, column=6, sticky=EW)
+
+    
+    def open_file(self, txt_file_name):
+        file_path = filedialog.askopenfilename(initialdir='./Files', title="Select file", filetypes=(("mp3 files", "*.mp3"), ("all files", "*.*")))
+
+        if not file_path:
+            return
+
+        txt_file_name.set(file_path)
+
+    
+    def split(self):
+        filename = self.txt_file_name.get()
+
+        print(filename)
 
         if filename == '':
-            sg.popup('Please select a file')
-            continue
+            showerror("Error", "Please select a file")
+            return
 
         if not os.path.isfile(filename):
-            sg.popup('Please select a valid file')
-            continue
+            showerror("Error", "File does not exist")
+            return
 
-        split(window)
+        filename = filename.rstrip().replace(' ', '\\ ')
+        filename = os.path.basename(filename)
 
-window.close()
+        part_prefix = self.txt_part_prefix.get()
+        separator = self.txt_separator.get()
+
+        file_total_duration_seconds = get_time_in_seconds(self.txt_file_duration.get())
+        part_duration_seconds = get_time_in_seconds(self.txt_part_duration.get())
+        start_part_number = int(self.txt_part_number.get())
+
+        chapters = self.txt_chapters.get('1.0', END).split('\n')
+
+        split_file = SplitFile(filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, self.progress_bar, self.txt_status)
+        split_file.run()
+
+
+if __name__ == '__main__':
+    initial_menu = Tk()
+
+    menu = MainMenu(initial_menu)
+
+    menu.root.mainloop()

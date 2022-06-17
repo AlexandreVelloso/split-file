@@ -5,11 +5,11 @@ import time
 
 class ProgressBar:
 
-    def __init__(self, total, window):
+    def __init__(self, total, progress_bar):
         self.start = datetime.now()
         self.count = 0
         self.total = total
-        self.window = window
+        self.progress_bar = progress_bar
         self.thread = threading.Thread(target=self.update_progress_bar)
         self.doRun = False
 
@@ -26,11 +26,11 @@ class ProgressBar:
 
     def update_progress_bar(self):
         while(self.count < self.total and self.doRun == False):
-            self.window['progress_bar'].update(self.remains())
+            self.progress_bar['value'] = self.remains()
             time.sleep(0.1)
 
         time.sleep(0.1)       
-        self.window['progress_bar'].update(self.remains())
+        self.progress_bar['value'] = self.remains()
 
 
     def remains(self):

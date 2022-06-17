@@ -5,7 +5,7 @@ from inputs import get_time_in_seconds
 
 class SplitFile:
 
-    def __init__(self, filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, window):
+    def __init__(self, filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, progress_bar, txt_status):
         self.thread = threading.Thread(target=self.split_file)
         self.doRun = False
         self.filename = filename
@@ -15,7 +15,8 @@ class SplitFile:
         self.part_duration_seconds = part_duration_seconds
         self.start_part_number = start_part_number
         self.chapters = chapters
-        self.window = window
+        self.progress_bar = progress_bar
+        self.txt_status = txt_status
 
 
     def run(self):
@@ -43,7 +44,7 @@ class SplitFile:
         start = time_start_file
         end = time_start_file + duration
 
-        progress = ProgressBar(file_total_duration, self.window)
+        progress = ProgressBar(file_total_duration, self.progress_bar)
         progress.run()
 
         while(end <= file_total_duration):
@@ -84,10 +85,18 @@ class SplitFile:
                 next_chapter = self.chapters[i + 1]
                 time_end_file = get_time_in_seconds(next_chapter.split(' ')[0])
 
-            status.append('Splitting chapter ' + chapter_name.replace('\\', ' '))
-            self.window['status'].update('\n'.join(status))
+            status.append('Splitting chapter ' + chapter_name.replace('\\ ', ' '))
+            self.set_status_text('\n'.join(status))
 
             part_number = self.split_chapter(self.filename, self.part_prefix, self.separator, chapter_name, time_end_file, time_start_file, part_number, self.part_duration_seconds)
 
             status.append('Done')
-            self.window['status'].update('\n'.join(status))
+            self.set_status_text('\n'.join(status))
+    
+
+    def set_status_text(self, text):
+        self.txt_status.configure(state='normal')
+        self.txt_status.delete(1.0, "end")
+        self.txt_status.insert(1.0, text)
+        self.txt_status.configure(state='disabled')
+        self.txt_status.see('end')
