@@ -1,14 +1,15 @@
 import os
 from tkinter import *
 from tkinter import filedialog
+from tkinter.ttk import Progressbar, Separator, Style
 from turtle import width
 
 
 class MainMenu:
     
     def __init__(self, root):
-        self.form_width = 500
-        self.form_height = 350
+        self.form_width = 1000
+        self.form_height = 400
 
         self.root = root
         self.root.title('Split audio file')
@@ -25,81 +26,105 @@ class MainMenu:
         self.root.minsize(self.form_width, self.form_height)
 
         # Open file row
-        txt_file_name = StringVar()
+        self.txt_file_name = StringVar()
         
-        lb_open_file = Label(self.root, text="Open file", width=10)
-        ent_file_name = Entry(self.root, width=30, state='disabled', textvariable=txt_file_name)
-        btn_open_file = Button(self.root, text="Open File", command=lambda: self.open_file(txt_file_name))
+        self.lb_open_file = Label(self.root, text="Open file", width=10)
+        self.ent_file_name = Entry(self.root, width=40, state='readonly', textvariable=self.txt_file_name)
+        self.btn_open_file = Button(self.root, text="Open File", command=lambda: self.open_file(self.txt_file_name))
         
-        lb_open_file.grid(row=0, column=0, sticky=E)
-        ent_file_name.grid(row=0, column=1, sticky=W)
-        btn_open_file.grid(row=0, column=2, sticky=W)
+        self.lb_open_file.grid(row=0, column=0, sticky=E)
+        self.ent_file_name.grid(row=0, column=1, sticky=W)
+        self.btn_open_file.grid(row=0, column=2, sticky=W)
 
         # Part number row
-        txt_part_number = StringVar(value='1')
+        self.txt_part_number = StringVar(value='1')
 
-        lb_part_number = Label(self.root, text="Part number", width=10)
-        ent_part_number = Entry(self.root, textvariable=txt_part_number, width=5)
+        self.lb_part_number = Label(self.root, text="Part number", width=10)
+        self.ent_part_number = Entry(self.root, textvariable=self.txt_part_number, width=5)
         
-        lb_part_number.grid(row=1, column=0, sticky=E)
-        ent_part_number.grid(row=1, column=1, sticky=W)
+        self.lb_part_number.grid(row=1, column=0, sticky=E)
+        self.ent_part_number.grid(row=1, column=1, sticky=W)
 
         # Part prefix row
-        txt_part_prefix = StringVar(value='')
+        self.txt_part_prefix = StringVar(value='')
 
-        lb_part_prefix = Label(self.root, text="Part prefix", width=10)
-        ent_part_prefix = Entry(self.root, textvariable=txt_part_prefix, width=5)
+        self.lb_part_prefix = Label(self.root, text="Part prefix", width=10)
+        self.ent_part_prefix = Entry(self.root, textvariable=self.txt_part_prefix, width=5)
 
-        lb_part_prefix.grid(row=2, column=0, sticky=E)
-        ent_part_prefix.grid(row=2, column=1, sticky=W)
+        self.lb_part_prefix.grid(row=2, column=0, sticky=E)
+        self.ent_part_prefix.grid(row=2, column=1, sticky=W)
 
         # Separator row
-        txt_separator = StringVar(value='-')
+        self.txt_separator = StringVar(value='-')
 
-        lb_separator = Label(self.root, text="Separator", width=10)
-        ent_separator = Entry(self.root, textvariable=txt_separator, width=5)
+        self.lb_separator = Label(self.root, text="Separator", width=10)
+        self.ent_separator = Entry(self.root, textvariable=self.txt_separator, width=5)
 
-        lb_separator.grid(row=3, column=0, sticky=E)
-        ent_separator.grid(row=3, column=1, sticky=W)
+        self.lb_separator.grid(row=3, column=0, sticky=E)
+        self.ent_separator.grid(row=3, column=1, sticky=W)
 
         # File duration row
-        txt_file_duration = StringVar(value='00:00:00')
+        self.txt_file_duration = StringVar(value='00:00:00')
 
-        lb_file_duration = Label(self.root, text="File duration", width=10)
-        ent_file_duration = Entry(self.root, textvariable=txt_file_duration, width=10)
+        self.lb_file_duration = Label(self.root, text="File duration", width=10)
+        self.ent_file_duration = Entry(self.root, textvariable=self.txt_file_duration, width=10)
 
-        lb_file_duration.grid(row=4, column=0, sticky=E)
-        ent_file_duration.grid(row=4, column=1, sticky=W)
+        self.lb_file_duration.grid(row=4, column=0, sticky=E)
+        self.ent_file_duration.grid(row=4, column=1, sticky=W)
 
         # Part duration row
-        txt_part_duration = StringVar(value='05:00')
+        self.txt_part_duration = StringVar(value='05:00')
 
-        lb_part_duration = Label(self.root, text="Part duration", width=10)
-        ent_part_duration = Entry(self.root, textvariable=txt_part_duration, width=10)
+        self.lb_part_duration = Label(self.root, text="Part duration", width=10)
+        self.ent_part_duration = Entry(self.root, textvariable=self.txt_part_duration, width=10)
 
-        lb_part_duration.grid(row=5, column=0, sticky=E)
-        ent_part_duration.grid(row=5, column=1, sticky=W)
+        self.lb_part_duration.grid(row=5, column=0, sticky=E)
+        self.ent_part_duration.grid(row=5, column=1, sticky=W)
 
         # Chapters row
-        lb_chapters = Label(self.root, text="Chapters", width=10)
-        ent_chapters = Text(self.root, width=30, height=10)
+        self.lb_chapters = Label(self.root, text="Chapters", width=10)
+        self.txt_chapters = Text(self.root, width=30, height=10)
 
-        scroll_chapters = Scrollbar(self.root, orient=VERTICAL, command=ent_chapters.yview)
+        self.scroll_chapters = Scrollbar(self.root, orient=VERTICAL, command=self.txt_chapters.yview)
 
-        lb_chapters.grid(row=6, column=0, sticky=E)
-        ent_chapters.grid(row=6, column=1, sticky=EW)
-        scroll_chapters.grid(row=6, column=2, sticky='NSW')
+        self.lb_chapters.grid(row=6, column=0, sticky=E)
+        self.txt_chapters.grid(row=6, column=1, sticky=EW)
+        self.scroll_chapters.grid(row=6, column=2, sticky='NSW')
 
-        ent_chapters['yscrollcommand'] = scroll_chapters.set
+        self.txt_chapters['yscrollcommand'] = self.scroll_chapters.set
 
         # Split file button
-        btn_split_file = Button(self.root, text="Split file", command=self.split)
+        self.btn_split_file = Button(self.root, text="Split file", command=self.split)
 
-        btn_split_file.grid(row=7, column=1, sticky=EW)
+        self.btn_split_file.grid(row=7, column=1, sticky=EW)
+
+        # Vertical separator
+        self.v_separator = Separator(self.root,orient=VERTICAL)
+
+        self.v_separator.grid(row=0, column=4, padx=10, pady=10, rowspan=8, sticky=NS)
+
+        # Status row
+        self.lb_status = Label(self.root, text="Status", width=10)
+        self.txt_status = Text(self.root, width=30, height=10)
+
+        self.lb_status.grid(row=0, column=5, sticky=W)
+        self.txt_status.grid(row=0, column=6, sticky=EW, rowspan=4)
+
+        # Progress bar row
+        self.stl_progress_bar = Style()
+        self.stl_progress_bar.theme_use("default")
+        self.stl_progress_bar.configure("TProgressbar", thickness=10)
+
+        self.lb_progress_bar = Label(self.root, text="Progress", width=10)
+        self.progress_bar = Progressbar(self.root, orient=HORIZONTAL, length=100, style="TProgressbar")
+
+        self.lb_progress_bar.grid(row=4, column=5, sticky=W)
+        self.progress_bar.grid(row=4, column=6, sticky=EW)
+        self.progress_bar['value'] = 10
 
     
-    def open_file(txt_file_name):
-        file_path = filedialog.askopenfilename()
+    def open_file(self, txt_file_name):
+        file_path = filedialog.askopenfilename(initialdir='./Files', title="Select file", filetypes=(("mp3 files", "*.mp3"), ("all files", "*.*")))
 
         if not file_path:
             return
@@ -109,7 +134,7 @@ class MainMenu:
         return file_path
 
     
-    def split():
+    def split(self):
         pass
 
 
