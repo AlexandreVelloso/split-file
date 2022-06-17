@@ -49,7 +49,7 @@ class MainMenu:
         self.ent_part_number.grid(row=1, column=1, sticky=W)
 
         # Part prefix row
-        self.txt_part_prefix = StringVar(value='GOT')
+        self.txt_part_prefix = StringVar(value='')
 
         self.lb_part_prefix = Label(self.root, text="Part prefix", width=10)
         self.ent_part_prefix = Entry(self.root, textvariable=self.txt_part_prefix, width=5)
@@ -67,7 +67,7 @@ class MainMenu:
         self.ent_separator.grid(row=3, column=1, sticky=W)
 
         # File duration row
-        self.txt_file_duration = StringVar(value='09:37:58')
+        self.txt_file_duration = StringVar(value='00:00:00')
 
         self.lb_file_duration = Label(self.root, text="File duration", width=10)
         self.ent_file_duration = Entry(self.root, textvariable=self.txt_file_duration, width=10)
@@ -141,8 +141,6 @@ class MainMenu:
     
     def split(self):
         filename = self.txt_file_name.get()
-
-        print(filename)
 
         if filename == '':
             showerror("Error", "Please select a file")
