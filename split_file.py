@@ -7,7 +7,7 @@ class SplitFile:
 
     def __init__(self, filename, part_prefix, separator, file_total_duration_seconds, part_duration_seconds, start_part_number, chapters, progress_bar, txt_status):
         self.thread = threading.Thread(target=self.split_file)
-        self.doRun = False
+        self.doRun = True
         self.filename = filename
         self.part_prefix = part_prefix
         self.separator = separator
@@ -23,13 +23,12 @@ class SplitFile:
 
     def run(self):
         self.start = datetime.now()
-
         self.thread.start()
 
     
     def stop(self):
-        self.doRun = True
-        self.thread.join()
+        self.doRun = False
+        self.progress.stop()
 
 
     def cut_file(self, filename, output_name, start, end, file_extension='mp3'):
@@ -49,6 +48,10 @@ class SplitFile:
         end = time_start_file + duration
 
         while(end <= file_total_duration):
+            
+            if self.doRun == False:
+                return
+
             output_name = ''.join([part_prefix, '\\ ', separator, '\\ ', str(part_number), '\\ ', separator, '\\ ', part_suffix])
             self.cut_file(filename, output_name, start, end)
 
@@ -58,7 +61,7 @@ class SplitFile:
 
             self.progress.count = start
 
-        if (start < file_total_duration):
+        if (start < file_total_duration and self.doRun == True):
             output_name = ''.join([part_prefix, '\\ ', separator, '\\ ', str(part_number), '\\ ', separator, '\\ ', part_suffix])
             self.cut_file(filename, output_name, start, file_total_duration)
             part_number += 1
@@ -72,6 +75,10 @@ class SplitFile:
         self.progress.run()
 
         for i in range(0, len(self.chapters) - 1):
+
+            if self.doRun == False:
+                return
+
             chapter = self.chapters[i]
 
             chapter_words = chapter.split(' ')

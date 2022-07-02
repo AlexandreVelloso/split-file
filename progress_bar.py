@@ -11,7 +11,7 @@ class ProgressBar:
         self.total = total
         self.progress_bar = progress_bar
         self.thread = threading.Thread(target=self.update_progress_bar)
-        self.doRun = False
+        self.doRun = True
 
 
     def run(self):
@@ -20,12 +20,11 @@ class ProgressBar:
 
 
     def stop(self):
-        self.doRun = True
-        self.thread.join()
+        self.doRun = False
 
 
     def update_progress_bar(self):
-        while(self.count < self.total and self.doRun == False):
+        while(self.count < self.total and self.doRun == True):
             self.progress_bar['value'] = self.remains()
             time.sleep(0.1)
 
