@@ -14,6 +14,7 @@ class MainMenu:
     
     def __init__(self, root):
         self.split_file = None
+        self.is_stopped = False
 
         self.form_width = 1100
         self.form_height = 350
