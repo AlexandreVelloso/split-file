@@ -16,7 +16,7 @@ class MainMenu:
         self.split_file = None
         self.is_stopped = False
 
-        self.form_width = 1100
+        self.form_width = 1450
         self.form_height = 350
 
         self.root = root
@@ -35,9 +35,10 @@ class MainMenu:
 
         # Open file row
         self.txt_file_name = StringVar()
+        self.global_filepath = ""
         
         self.lb_open_file = Label(self.root, text="Open file", width=10)
-        self.ent_file_name = Entry(self.root, width=40, state='readonly', textvariable=self.txt_file_name)
+        self.ent_file_name = Entry(self.root, width=80, state='readonly', textvariable=self.txt_file_name)
         self.btn_open_file = Button(self.root, text="Open File", command=lambda: self.open_file(self.txt_file_name))
         
         self.lb_open_file.grid(row=0, column=0, sticky=E)
@@ -136,8 +137,11 @@ class MainMenu:
 
         if not file_path:
             return
-
-        txt_file_name.set(file_path)
+        
+        self.global_filepath = file_path
+        
+        file_name = os.path.basename(file_path)
+        txt_file_name.set('.../' + file_name)
 
     
     def get_total_file_duration(self, file_path):
@@ -155,7 +159,7 @@ class MainMenu:
 
 
     def split(self):
-        filename = self.txt_file_name.get()
+        filename = self.global_filepath
         part_prefix = self.txt_part_prefix.get()
         chapters = self.txt_chapters.get('1.0', END).split('\n')
 
@@ -184,7 +188,7 @@ class MainMenu:
 
         separator = self.txt_separator.get()
 
-        file_total_duration_seconds = self.get_total_file_duration(self.txt_file_name.get())
+        file_total_duration_seconds = self.get_total_file_duration(self.global_filepath)
         part_duration_seconds = get_time_in_seconds(self.txt_part_duration.get())
         start_part_number = int(self.txt_part_number.get())        
 
