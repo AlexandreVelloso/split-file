@@ -5,8 +5,17 @@ This project requires ffmpeg
 
 ### Activate the virtual env
 ```
-$ source bin/activate
+source bin/activate
 ```
+
+### Install packages
+
+#### Mac
+
+````
+brew brew install python-tk
+brew install ffmpeg
+````
 
 ### Run the code
 ```
